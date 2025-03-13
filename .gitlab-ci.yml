@@ -1,0 +1,4 @@
+include:
+  - project: ${GITLAB_RUNNER_PROJECT}
+    ref: ${GITLAB_RUNNER_BRANCH}
+    file: ${GITLAB_RUNNER_TEMPLATE}.yml

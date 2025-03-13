@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <DEPLOY_NAME>
+  labels:
+    app: <DEPLOY_NAME>
+    version: <VERSION>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <DEPLOY_NAME>
+      version: <VERSION>
+  template:
+    metadata:
+      labels:
+        app: <DEPLOY_NAME>
+        version: <VERSION>
+        minor-version: <MINOR_VERSION>
+    spec:
+      containers:
+        - name: <DEPLOY_NAME>
+          image: <IMAGE_URL>
+          ports:
+            - containerPort: <SERVER_PORT>
+            - containerPort: <SERVER_WEBHOOK_PORT>
+          env:
+            - name: NAME_SPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SERVICE_NAME
+              value: <DEPLOY_NAME>
+          envFrom:
+            - configMapRef:
+                name: <DEPLOY_NAME>-configmap
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: <SERVER_PORT>
+            initialDelaySeconds: 60
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: <SERVER_PORT>
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          resources:
+            limits:
+              cpu: 500m
+              memory: 800Mi
+            requests:
+              cpu: 256m
+              memory: 512Mi
+          imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+        - name: <REGSECRET>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: <DEPLOY_NAME>
+  labels:
+    app: <DEPLOY_NAME>
+spec:
+  selector:
+    app: <DEPLOY_NAME>
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: <SERVER_PORT>
+      targetPort: <SERVER_PORT>
+    - name: http-webhook
+      protocol: TCP
+      port: <SERVER_WEBHOOK_PORT>
+      targetPort: <SERVER_WEBHOOK_PORT>
