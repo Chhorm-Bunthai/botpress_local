@@ -14,16 +14,16 @@ export class TelegramService implements OnApplicationBootstrap {
   }
   async onApplicationBootstrap() {
     await this.setupWebhook();
-    const webhookUrl = this.configService.get<string>("TELEGRAM_WEBHOOK_URL");
+    const webhookUrl = this.configService.get<string>("NGROK_URL");
     if (!webhookUrl) {
-      throw new Error("TELEGRAM_WEBHOOK_URL is not defined");
+      throw new Error("NGROK_URL is not defined");
     }
   }
   private async setupWebhook() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await this.bot.telegram.deleteWebhook();
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const webhookUrl = `${this.configService.get("TELEGRAM_WEBHOOK_URL")}/telegram-webhook`;
+    const webhookUrl = `${this.configService.get("NGROK_URL")}/telegram-webhook`;
     await this.bot.telegram.setWebhook(webhookUrl);
 
     try {

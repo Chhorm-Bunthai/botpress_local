@@ -53,7 +53,7 @@ export class TelegramController {
     if (update.message?.contact) {
       try {
         console.log("Attempting to whitelist user with:", {
-          url: `${process.env.TELEGRAM_WEBHOOK_URL}/whitelist/user`,
+          url: `${process.env.NGROK_URL}/whitelist/user`,
         });
 
         await this.whitelistService.createUser({

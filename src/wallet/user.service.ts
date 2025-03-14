@@ -1,6 +1,8 @@
+import { HttpService } from "@nestjs/axios";
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
+import { firstValueFrom } from "rxjs";
 import { Telegraf } from "telegraf";
 
 @Injectable()
@@ -17,9 +19,9 @@ export class UserService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await this.setupWebhook();
-    const ngrokUrl = this.configService.get<string>("TELEGRAM_WEBHOOK_URL");
+    const ngrokUrl = this.configService.get<string>("NGROK_URL");
     if (!ngrokUrl) {
-      throw new Error("TELEGRAM_WEBHOOK_URL is not defined");
+      throw new Error("NGROK_URL is not defined");
     }
   }
 
@@ -30,7 +32,7 @@ export class UserService implements OnApplicationBootstrap {
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const webhookUrl = `${this.configService.get("TELEGRAM_WEBHOOK_URL")}/user-profile/telegram-webhook/user`;
+    const webhookUrl = `${this.configService.get("NGROK_URL")}/user-profile/telegram-webhook/user`;
 
     await this.bot.telegram.setWebhook(webhookUrl);
 
