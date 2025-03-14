@@ -9,10 +9,7 @@ export default registerAs("database", () => {
     password: process.env.DATABASE_PASSWORD,
     username: process.env.DATABASE_USERNAME,
     type: "postgres",
-    ssl:
-      process.env.DATABASE_SSL === "true"
-        ? { rejectUnauthorized: false }
-        : false,
+    ssl: false,
     host: process.env.DATABASE_HOST,
     port: parseInt(process.env.DATABASE_PORT as string, 10),
   };
